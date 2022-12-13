@@ -192,10 +192,11 @@ void loop() {
         getIncline();
         break;
       }
-      // case 249: Serial.println("Heartbeat Detected"); break;
+      case 249: Serial.println("Heartbeat Detected"); break;
       default: {
-        // Serial.print("data3 = ");
-        // Serial.println(data3, DEC);
+        Serial.print("Unknown Command detected: ")
+        Serial.print("data3 = ");
+        Serial.println(data3, DEC);
         break;
       } 
     }
