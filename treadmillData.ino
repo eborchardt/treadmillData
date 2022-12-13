@@ -152,12 +152,15 @@ const float inclineTable[25][8] = {
 	{2,3,232,26,12}
 };
 
+const int stopCommand[3] = {1,0,182};
+
 float currentSpeed[4];
 float currentMPH;
 float prevMPH = 13;
 float currentIncline[4];
 float currentPercent;
 float prevPercent = 13;
+int   currentStop[3];
 
 void setup() {
   // put your setup code here, to run once:
@@ -192,11 +195,30 @@ void loop() {
         getIncline();
         break;
       }
-      case 249: Serial.println("Heartbeat Detected"); break;
+      case 249: {
+        // Serial.println("Heartbeat Detected"); 
+        break;
+      }
+      case 245: {
+        getStop();
+        break;
+      }
       default: {
-        Serial.print("Unknown Command detected: ")
+        Serial.print("Unknown Command detected: ");
         Serial.print("data3 = ");
         Serial.println(data3, DEC);
+        Serial.print("{Command Received} ");
+        int unknownCommand[3];
+        for (int i = 0; i < 3; i++) {
+          unknownCommand[i] = Serial2.read();
+        }
+        Serial.print("0, 255, ");
+        Serial.print(data3, DEC);
+        for (int i = 0; i < 3; i++) {
+          Serial.print(", ");
+          Serial.print(unknownCommand[i]);
+        }
+        Serial.println();
         break;
       } 
     }
@@ -253,7 +275,7 @@ void getSpeed() {
 
 void getIncline() {
     if (debug != true) {
-    for(int i=0; i < 4; i++) {
+      for(int i=0; i < 4; i++) {
       // Serial.print("Serial Data ");
       currentIncline[i] = Serial2.read();
     }
@@ -286,12 +308,37 @@ void getIncline() {
     //Print the current speed in MPH
     currentPercent = inclineTable[i][4];
     // Serial.print(currentPercent, 1);
-    // Serial.println(" degrees ");
+    // Serial.println(" %");
     if (currentPercent != prevPercent) {
         Serial.print(currentPercent, 1);
         Serial.println(" %");
         prevPercent = currentPercent;
       }
     }
+  }
+}
+
+
+
+void getStop() {
+  if (debug != true) {
+      for(int i=0; i < 3; i++) {
+      // Serial.print("Serial Data ");
+      currentStop[i] = Serial2.read();
+    }
+  } 
+  // Print the received serial command, useful for debugging
+  Serial.print("{Command Received} 0, 255, 245");
+  for (int i=0; i < 3; i++) {
+    Serial.print(", ");
+    Serial.print((int)currentStop[i]);
+  }
+  Serial.println();
+  if ( 
+    currentStop[0] == stopCommand[0] &&
+    currentStop[1] == stopCommand[1] &&
+    currentStop[2] == stopCommand[2]
+  ) {
+    Serial.println("Stop Command Detected");
   }
 }
