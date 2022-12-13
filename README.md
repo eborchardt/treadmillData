@@ -4,7 +4,7 @@ The objective of this project was to reverse engineer the serial communication f
 
 I wrote this program for an ESP32, since it has three serial ports and I had one laying around. The Serial2 Rx pin of the ESP32 is connected directly to the low side of the MAX3085 Tx IC inside the control panel and I also connected the ground pins to improve the reliability of the data.
 
-I found what appears to be three types of commands being transmitted to the motor controller, speed, incine, and one that I'm assuming is simply a keep-alive heartbeat. The basic idea seems to be that all commands begin with `0 255`. Byte3 will determine the type of command, speed is 241, incline is 246. It's possible that byte4 carries some meaning as well, but I didn't investigate any further. 
+I found what appears to be four types of commands being transmitted to the motor controller, speed, incine, stop, and one that I'm assuming is simply a keep-alive heartbeat. The basic idea seems to be that all commands begin with `0 255`. Byte3 will determine the type of command, speed is 241, incline is 246. It's possible that byte4 carries some meaning as well, but I didn't investigate any further. 
 
 There is no terminating character on each command, so I needed to look for the pattern of `0 255` to detect the start of a command. Then I used byte3 to determine how many more bytes to expect and grabbed that many more bytes from the serial buffer. In the case of the speed and incline commands, they are both a total of 7 bits. Here is what I found for my treadmill:
 
@@ -157,6 +157,11 @@ There is no terminating character on each command, so I needed to look for the p
 | 0     | 255   | 246   | 2     | 3     | 152   | 226   | 11                             |
 | 0     | 255   | 246   | 2     | 3     | 192   | 37    | 11.5                           |
 | 0     | 255   | 246   | 2     | 3     | 232   | 26    | 12                             |
+
+# Stop Command
+| byte1 | byte2 | byte3 | byte4 | byte5 | byte6 |
+|-------|-------|-------|-------|-------|-------|
+| 0     | 255   | 245   | 1     | 0     | 182   |
 
 # Unknown Command (Possibly a keep-alive heartbeat)
 | byte1 | byte2 | byte3 | byte4 | byte5 |
