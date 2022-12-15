@@ -1,6 +1,8 @@
 # treadmillData
 
-The objective of this project was to reverse engineer the serial communication from the treadmill user interface to the treadmill motor control board to see if I can extract the current speed and incline data. I have a Livestrong LS8.0T, which is manufactored by Johnson Fitness. I was initially intending to use a magnet or rotary encoder to collect the speed, but upon disassembly, I discovered a MAX3085 that appeared to connect the controls to the motor control board. After a little investigating, I found the serial communication between the controls and the motor controller to be easy to decode.
+See the next phase of this project at https://github.com/eborchardt/BluetoothTreadmill
+
+The objective of this project was to reverse engineer the serial communication from the treadmill user interface to the treadmill motor control board to see if I can extract the current speed and incline data. I have a Livestrong LS8.0T, which is manufactored by Johnson Fitness. I was initially intending to use a magnet or rotary encoder to collect the speed, but upon disassembly, I discovered a MAX3085 that appeared to connect the controls to the motor control board. After a little investigating, I found the serial communication between the controls and the motor controller to be easy to decode. 
 
 I wrote this program for an ESP32, since it has three serial ports and I had one laying around. The Serial2 Rx pin of the ESP32 is connected directly to the low side of the MAX3085 Tx IC inside the control panel and I also connected the ground pins to improve the reliability of the data.
 
